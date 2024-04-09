@@ -2,44 +2,39 @@ from app.ship import Ship
 
 
 class Battleship:
-    def __init__(self, ships):
+    def __init__(self, ships: list) -> None:
         self.field = {}
         self.ships = ships
         for ship in ships:
             self.place_ship(ship)
 
-    def place_ship(self, ship_coords):
+    def place_ship(self, ship_coords: tuple) -> None:
         ship = Ship(ship_coords[0], ship_coords[1])
-        for i in range(ship_coords[0][0], ship_coords[1][0] + 1):
-            for j in range(ship_coords[0][1], ship_coords[1][1] + 1):
-                self.field[(i, j)] = ship
+        for row in range(ship_coords[0][0], ship_coords[1][0] + 1):
+            for column in range(ship_coords[0][1], ship_coords[1][1] + 1):
+                self.field[(row, column)] = ship
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
-            all_decks_sunk = all(not deck.is_alive for deck in ship.decks)
-            if all_decks_sunk:
+            ship.fire(location[0], location[1])
+            if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
-    # def print_field(self):
-    #     for i in range(10):
-    #         for j in range(10):
-    #             location = (i, j)
-    #             if location in self.field:
-    #                 ship = self.field[location]
-    #                 for deck in ship.decks:
-    #                     if deck.row == location[0] and deck.column == location[1]:
-    #                         if deck.is_alive:
-    #                             print(u"\u25A1", end=" ")
-    #                         else:
-    #                             if ship.is_drowned:
-    #                                 print("x", end=" ")
-    #                             else:
-    #                                 print("*", end=" ")
-    #             else:
-    #                 print("~", end=" ")
-    #         print()
+    def print_field(self) -> None:
+        for row in range(0, 10):
+            output = ""
+            for column in range(0, 10):
+                ship = self.field.get((row, column))
+                if ship:
+                    if ship.is_drowned:
+                        output += "x "
+                    elif ship.get_deck(row, column).is_alive:
+                        output += "□ "
+                    else:
+                        output += "* "
+                else:
+                    output += "~ "
+            print(output)
