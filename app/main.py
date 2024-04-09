@@ -10,9 +10,8 @@ class Battleship:
 
     def place_ship(self, ship_coords: tuple) -> None:
         ship = Ship(ship_coords[0], ship_coords[1])
-        for row in range(ship_coords[0][0], ship_coords[1][0] + 1):
-            for column in range(ship_coords[0][1], ship_coords[1][1] + 1):
-                self.field[(row, column)] = ship
+        for deck in ship.decks:
+            self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
